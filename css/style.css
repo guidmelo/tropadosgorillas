@@ -1,0 +1,762 @@
+/* ================================================================
+   TROPA DOS GORILLAS — style.css
+   Paleta: --y (#FFB800) amarelo | --bk (#050505) fundo principal
+   Para alterar cores globais edite as CSS Variables abaixo
+================================================================ */
+
+/* ----------------------------------------------------------------
+   VARIÁVEIS GLOBAIS
+   Alterar cores aqui afeta toda a página
+---------------------------------------------------------------- */
+:root {
+  --y:  #FFB800;   /* amarelo TPDG */
+  --yd: #D49800;   /* amarelo hover/dark */
+  --bk: #050505;   /* fundo principal */
+  --dk: #0A0A0A;   /* fundo secundário */
+  --cl: #111111;   /* fundo terciário */
+}
+
+/* ----------------------------------------------------------------
+   RESET & BASE
+---------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bk);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* cursor padrão em touch devices */
+@media (hover: none) { body { cursor: auto; } }
+
+::selection { background: var(--y); color: #000; }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bk); }
+::-webkit-scrollbar-thumb { background: var(--y); }
+
+/* ----------------------------------------------------------------
+   FILM GRAIN
+   Ajustar opacity abaixo para mais/menos granulação
+---------------------------------------------------------------- */
+.grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9990;
+  opacity: 0.035; /* ← altere aqui */
+}
+
+/* ----------------------------------------------------------------
+   CURSOR CUSTOMIZADO
+---------------------------------------------------------------- */
+#cursor {
+  position: fixed;
+  top: 0; left: 0;
+  width: 10px; height: 10px;
+  background: var(--y);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  transform: translate(-50%, -50%);
+}
+
+#cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 36px; height: 36px;
+  border: 1.5px solid rgba(255, 184, 0, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, border-color 0.3s;
+}
+
+#cursor-ring.hover {
+  width: 52px; height: 52px;
+  border-color: var(--y);
+}
+
+@media (hover: none) { #cursor, #cursor-ring { display: none; } }
+
+/* ----------------------------------------------------------------
+   PADRÕES — halftone e stripes
+---------------------------------------------------------------- */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(255, 184, 0, 0.18) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+.dot-grid-sm {
+  background-image: radial-gradient(circle, rgba(255, 184, 0, 0.12) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+.stripes-y {
+  background: repeating-linear-gradient(
+    -55deg,
+    var(--y), var(--y) 8px,
+    #000 8px, #000 18px
+  );
+}
+
+/* ----------------------------------------------------------------
+   TIPOGRAFIA HELPERS
+---------------------------------------------------------------- */
+.label-tag {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--y);
+}
+
+.sec-title {
+  font-family: 'Anton', sans-serif;
+  text-transform: uppercase;
+  line-height: 0.93;
+  letter-spacing: -0.02em;
+}
+
+.slash-deco::before {
+  content: '///';
+  font-family: 'Anton', sans-serif;
+  color: var(--y);
+  margin-right: 10px;
+  opacity: 0.55;
+  letter-spacing: -2px;
+}
+
+/* ----------------------------------------------------------------
+   PILL BADGE
+---------------------------------------------------------------- */
+.pill {
+  display: inline-block;
+  background: var(--y);
+  color: #000;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+/* ----------------------------------------------------------------
+   MARQUEE
+---------------------------------------------------------------- */
+.mq-wrap { overflow: hidden; }
+
+.mq-track {
+  display: flex;
+  white-space: nowrap;
+  animation: mq 22s linear infinite;
+}
+
+.mq-track-rev {
+  animation: mqr 28s linear infinite;
+}
+
+@keyframes mq  { from { transform: translateX(0); }    to { transform: translateX(-50%); } }
+@keyframes mqr { from { transform: translateX(-50%); } to { transform: translateX(0); }    }
+
+/* ----------------------------------------------------------------
+   HERO
+---------------------------------------------------------------- */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 184, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 184, 0, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.hero-radial {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 15% 50%, rgba(255, 184, 0, 0.09) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 85% 20%, rgba(255, 184, 0, 0.06) 0%, transparent 60%),
+    linear-gradient(170deg, #050505 0%, #0a0a0a 60%, #050505 100%);
+}
+
+#hero-glow {
+  position: absolute;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(255, 184, 0, 0.11) 0%, transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+/* ----------------------------------------------------------------
+   LOGO
+   Substituir src da <img> na seção #hero para trocar a logo
+---------------------------------------------------------------- */
+.logo-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.logo-wrap img {
+  filter: drop-shadow(0 0 28px rgba(255, 184, 0, 0.45))
+          drop-shadow(0 0 70px rgba(255, 184, 0, 0.2));
+}
+
+.logo-ring-1 {
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 184, 0, 0.2);
+  pointer-events: none;
+}
+
+.logo-ring-2 {
+  position: absolute;
+  inset: -28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 184, 0, 0.08);
+  pointer-events: none;
+  animation: orbit-pulse 3.5s ease-in-out infinite;
+}
+
+@keyframes orbit-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50%       { opacity: 0.1; transform: scale(1.06); }
+}
+
+/* ----------------------------------------------------------------
+   GLITCH
+---------------------------------------------------------------- */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-g);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+
+.glitch::before {
+  color: var(--y);
+  clip-path: polygon(0 0, 100% 0, 100% 42%, 0 42%);
+  animation: g1 4s infinite;
+}
+
+.glitch::after {
+  color: rgba(255, 255, 255, 0.85);
+  clip-path: polygon(0 58%, 100% 58%, 100% 100%, 0 100%);
+  animation: g2 4s infinite;
+}
+
+@keyframes g1 {
+  0%, 88%, 100% { transform: translate(0); }
+  90%           { transform: translate(-4px,  2px); }
+  93%           { transform: translate( 4px, -2px); }
+  96%           { transform: translate(-3px,  1px); }
+}
+
+@keyframes g2 {
+  0%, 88%, 100% { transform: translate(0); }
+  90%           { transform: translate( 4px, -2px); }
+  93%           { transform: translate(-4px,  2px); }
+  96%           { transform: translate( 3px, -1px); }
+}
+
+/* ----------------------------------------------------------------
+   CTA BUTTON PRINCIPAL
+   Alterar texto/link na tag <a#h-cta> no HTML
+---------------------------------------------------------------- */
+.cta-hero {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 40px;
+  background: var(--y);
+  color: #000;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  transition: color 0.4s, box-shadow 0.4s;
+  animation: cta-pulse 2.4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  will-change: transform;
+}
+
+.cta-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #000;
+  transform: translateX(-101%);
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.cta-hero:hover::before { transform: translateX(0); }
+
+.cta-hero:hover {
+  color: var(--y);
+  box-shadow: 0 0 50px rgba(255, 184, 0, 0.35), 0 0 100px rgba(255, 184, 0, 0.15);
+}
+
+.cta-hero > * { position: relative; z-index: 1; }
+
+@keyframes cta-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(255, 184, 0, 0.45); }
+  70%  { box-shadow: 0 0 0 22px rgba(255, 184, 0, 0); }
+  100% { box-shadow: 0 0 0 0   rgba(255, 184, 0, 0); }
+}
+
+/* ----------------------------------------------------------------
+   YOUTUBE CUSTOM PLAYER
+   Thumbnail: gerada automaticamente via YouTube API em thumbnails.js
+---------------------------------------------------------------- */
+.yt-player {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  background: #000;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.yt-thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* filtro cinematográfico obrigatório — design spec */
+  filter: grayscale(100%) contrast(1.2) brightness(0.48);
+  transition: filter 0.4s ease, transform 0.5s ease;
+}
+
+.yt-player:hover .yt-thumb {
+  filter: grayscale(100%) contrast(1.3) brightness(0.38);
+  transform: scale(1.03);
+}
+
+.yt-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  transition: background 0.3s;
+}
+
+.yt-player:hover .yt-overlay { background: rgba(0, 0, 0, 0.35); }
+
+.yt-play-btn {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--y);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+  box-shadow: 0 0 0 0 rgba(255, 184, 0, 0.5);
+  animation: play-pulse 2s ease-in-out infinite;
+}
+
+.yt-play-btn svg { margin-left: 4px; }
+
+.yt-player:hover .yt-play-btn {
+  transform: scale(1.12);
+  box-shadow: 0 0 40px rgba(255, 184, 0, 0.6);
+  animation: none;
+}
+
+@keyframes play-pulse {
+  0%, 100% { box-shadow: 0 0 0 0   rgba(255, 184, 0, 0.5); }
+  50%       { box-shadow: 0 0 0 18px rgba(255, 184, 0, 0);   }
+}
+
+/* iframe carregado ao clicar */
+.yt-player iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ----------------------------------------------------------------
+   VIDEO BORDER / CORNERS
+---------------------------------------------------------------- */
+.vid-border {
+  position: relative;
+  border: 2px solid rgba(255, 184, 0, 0.25);
+  box-shadow: 0 0 70px rgba(255, 184, 0, 0.08), 0 0 140px rgba(255, 184, 0, 0.04);
+}
+
+.vid-corner {
+  position: absolute;
+  width: 28px; height: 28px;
+  border-color: var(--y);
+  border-style: solid;
+  z-index: 5;
+}
+
+.vc-tl { top: -5px;    left: -5px;  border-width: 2px 0 0 2px; }
+.vc-tr { top: -5px;    right: -5px; border-width: 2px 2px 0 0; }
+.vc-bl { bottom: -5px; left: -5px;  border-width: 0 0 2px 2px; }
+.vc-br { bottom: -5px; right: -5px; border-width: 0 2px 2px 0; }
+
+/* ----------------------------------------------------------------
+   LINK CARDS
+   Alterar href, ícone e texto em cada .lk-card no HTML
+---------------------------------------------------------------- */
+.lk-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 28px;
+  background: #0d0d0d;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-left: 3px solid var(--y);
+  text-decoration: none;
+  color: #fff;
+  overflow: hidden;
+  transition: color 0.4s, border-color 0.3s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+.lk-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--y);
+  transform: translateX(-101%);
+  transition: transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.lk-card:hover::before { transform: translateX(0); }
+.lk-card:hover { color: #000; }
+.lk-card > * { position: relative; z-index: 1; }
+
+.lk-icon {
+  flex-shrink: 0;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 184, 0, 0.07);
+  border: 1px solid rgba(255, 184, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.4s, border-color 0.4s;
+}
+
+.lk-card:hover .lk-icon {
+  background: rgba(0, 0, 0, 0.15);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.lk-card:hover .lk-icon svg { fill: #000; stroke: #000; }
+
+.lk-arrow {
+  flex-shrink: 0;
+  opacity: 0.3;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.lk-card:hover .lk-arrow {
+  opacity: 1;
+  transform: translate(4px, -4px);
+}
+
+/* ----------------------------------------------------------------
+   INSTAGRAM GRID
+   Alterar href e data-ig-url em cada .ig-card no HTML
+   Thumbnails são carregadas automaticamente via thumbnails.js + api/ig-thumb.js
+---------------------------------------------------------------- */
+.ig-card {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  background: #0e0e0e;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.4s;
+}
+
+.ig-card:hover {
+  border-color: rgba(255, 184, 0, 0.3);
+  box-shadow: 0 0 30px rgba(255, 184, 0, 0.08);
+  transform: scale(1.02);
+}
+
+/* thumbnail de fundo — preenchida via JS */
+.ig-thumb-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  /* mesmo filtro cinematográfico do YouTube */
+  filter: grayscale(100%) contrast(1.2) brightness(0.45);
+  transition: filter 0.4s ease, transform 0.5s ease;
+}
+
+.ig-card:hover .ig-thumb-bg {
+  filter: grayscale(100%) contrast(1.3) brightness(0.3);
+  transform: scale(1.05);
+}
+
+/* overlay padrão quando não tem thumbnail */
+.ig-bg-1 { background: linear-gradient(135deg, #161616, #0a0a0a); }
+.ig-bg-2 { background: linear-gradient(225deg, #141414, #090909); }
+.ig-bg-3 { background: linear-gradient(315deg, #181818, #0b0b0b); }
+.ig-bg-4 { background: linear-gradient(45deg,  #151515, #0a0a0a); }
+.ig-bg-5 { background: linear-gradient(165deg, #171717, #0c0c0c); }
+
+.ig-letter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Anton', sans-serif;
+  font-size: 7rem;
+  color: rgba(255, 184, 0, 0.04);
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.4s;
+}
+
+/* esconde a letra quando tem thumbnail real */
+.ig-card.has-thumb .ig-letter { opacity: 0; }
+
+.ig-card-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  /* overlay escuro sobre a thumbnail */
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s;
+}
+
+.ig-card:hover .ig-card-inner { background: rgba(0, 0, 0, 0.35); }
+
+.ig-card-icon {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 184, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+}
+
+.ig-card:hover .ig-card-icon { background: rgba(255, 184, 0, 0.18); }
+
+.ig-card-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.3s;
+  opacity: 0;
+  transition: opacity 0.3s, color 0.3s;
+}
+
+.ig-card:hover .ig-card-label { color: var(--y); opacity: 1; }
+
+.ig-card-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--y);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.ig-card:hover .ig-card-bar { transform: scaleX(1); }
+
+/* estado de loading */
+.ig-card-loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,184,0,0.04) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ----------------------------------------------------------------
+   STATS
+---------------------------------------------------------------- */
+.stat-num {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  color: var(--y);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.stat-label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  margin-top: 6px;
+}
+
+/* ----------------------------------------------------------------
+   SOCIAL ICONS FOOTER
+   Alterar href em cada .soc-btn no HTML
+---------------------------------------------------------------- */
+.soc-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: border-color 0.3s, color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.soc-btn:hover {
+  border-color: var(--y);
+  color: var(--y);
+  background: rgba(255, 184, 0, 0.07);
+  transform: translateY(-4px);
+  box-shadow: 0 0 22px rgba(255, 184, 0, 0.18);
+}
+
+/* ----------------------------------------------------------------
+   SCROLL REVEAL
+---------------------------------------------------------------- */
+.rv   { opacity: 0; transform: translateY(45px); }
+.rv-s { opacity: 0; transform: scale(0.93); }
+
+/* ----------------------------------------------------------------
+   AMBIENT LIGHT
+---------------------------------------------------------------- */
+.amb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 184, 0, 0.14) 0%, transparent 70%);
+  pointer-events: none;
+  filter: blur(50px);
+}
+
+/* ----------------------------------------------------------------
+   BACK TO TOP
+---------------------------------------------------------------- */
+#btt {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  width: 48px; height: 48px;
+  background: var(--y);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  cursor: pointer;
+}
+
+#btt.vis { opacity: 1; pointer-events: auto; }
+#btt:hover { transform: translateY(-4px); }
+
+/* ----------------------------------------------------------------
+   TORN EDGE SVG DIVIDERS
+---------------------------------------------------------------- */
+.torn {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  display: block;
+}
+
+/* ----------------------------------------------------------------
+   INLINE FOLLOW BUTTON (Instagram CTA)
+---------------------------------------------------------------- */
+.follow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  border: 1px solid var(--y);
+  color: var(--y);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  transition: background 0.35s, color 0.35s;
+}
+
+.follow-btn:hover {
+  background: var(--y);
+  color: #000;
+}
+
+/* ----------------------------------------------------------------
+   RESPONSIVO
+---------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .cta-hero { padding: 17px 28px; font-size: 11px; }
+  .yt-play-btn { width: 56px; height: 56px; }
+}
