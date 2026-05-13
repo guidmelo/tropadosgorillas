@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Landing page premium — Tropa dos Gorillas crew de corrida urbana",
   "engines": {
-    "node": "18.x"
+    "node": "22.x"
   },
   "private": true
 }
