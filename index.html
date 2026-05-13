@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tropa dos Gorillas | Crew de Corrida Urbana</title>
+    <meta name="description" content="Nas ruas, porque somos dela. TPDG — Tropa dos Gorillas, crew de corrida urbana de Recife.">
+    <meta property="og:title" content="Tropa dos Gorillas | TPDG">
+    <meta property="og:description" content="Nas ruas, porque somos dela.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#FFB800">
+
+    <!-- ==========================================
+         FONTS — Google Fonts
+         Alterar fontes aqui se necessário
+    ========================================== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Archivo+Black&family=Oswald:wght@700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- ==========================================
+         TAILWIND CSS CDN
+    ========================================== -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- ==========================================
+         GSAP + ScrollTrigger
+    ========================================== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'tpdg': '#FFB800',
+                        'tpdg-dark': '#D49800',
+                        'abyss': '#050505',
+                        'pit':   '#0A0A0A',
+                        'coal':  '#111111',
+                    },
+                    fontFamily: {
+                        'anton':     ['Anton',        'Impact', 'sans-serif'],
+                        'bebas':     ['Bebas Neue',   'sans-serif'],
+                        'archivo':   ['Archivo Black','sans-serif'],
+                        'inter':     ['Inter',         'sans-serif'],
+                        'montserrat':['Montserrat',    'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* ============================================================
+           RESET & BASE
+        ============================================================ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* ==========================================
+           CSS VARIABLES — altere as cores aqui
+        ========================================== */
+        :root {
+            --y:   #FFB800;   /* amarelo TPDG principal */
+            --yd:  #D49800;   /* amarelo escuro hover */
+            --bk:  #050505;   /* fundo principal */
+            --dk:  #0A0A0A;   /* fundo secundário */
+            --cl:  #111111;   /* fundo terciário */
+        }
+
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+
+        body {
+            background: var(--bk);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* mobile: cursor padrão */
+        @media (hover: none) { body { cursor: auto; } }
+
+        ::selection { background: var(--y); color: #000; }
+
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: var(--bk); }
+        ::-webkit-scrollbar-thumb { background: var(--y); }
+
+        /* ============================================================
+           CUSTOM CURSOR
+        ============================================================ */
+        #cursor {
+            position: fixed; top: 0; left: 0; width: 10px; height: 10px;
+            background: var(--y); border-radius: 50%; pointer-events: none;
+            z-index: 9999; mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s linear;
+        }
+        #cursor-ring {
+            position: fixed; top: 0; left: 0; width: 36px; height: 36px;
+            border: 1.5px solid rgba(255,184,0,0.5); border-radius: 50%;
+            pointer-events: none; z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, border-color 0.3s;
+        }
+        #cursor-ring.hover { width: 52px; height: 52px; border-color: var(--y); }
+        @media (hover: none) { #cursor, #cursor-ring { display: none; } }
+
+        /* ============================================================
+           FILM GRAIN OVERLAY
+           Ajustar opacity no CSS .grain para mais ou menos granulação
+        ============================================================ */
+        .grain {
+            position: fixed; inset: 0; pointer-events: none; z-index: 9990;
+            opacity: 0.035;
+        }
+
+        /* ============================================================
+           HALFTONE DOT PATTERNS
+        ============================================================ */
+        .dot-grid {
+            background-image: radial-gradient(circle, rgba(255,184,0,0.18) 1px, transparent 1px);
+            background-size: 22px 22px;
+        }
+        .dot-grid-sm {
+            background-image: radial-gradient(circle, rgba(255,184,0,0.12) 1px, transparent 1px);
+            background-size: 12px 12px;
+        }
+
+        /* ============================================================
+           WARNING / DIAGONAL STRIPES
+        ============================================================ */
+        .stripes-y {
+            background: repeating-linear-gradient(
+                -55deg, var(--y), var(--y) 8px, #000 8px, #000 18px
+            );
+        }
+        .stripes-y-thin {
+            background: repeating-linear-gradient(
+                -55deg, rgba(255,184,0,0.4), rgba(255,184,0,0.4) 3px,
+                transparent 3px, transparent 12px
+            );
+        }
+        .slash-deco::before {
+            content: '///';
+            font-family: 'Anton', sans-serif;
+            color: var(--y);
+            margin-right: 10px;
+            opacity: 0.55;
+            letter-spacing: -2px;
+        }
+
+        /* ============================================================
+           TYPOGRAPHY HELPERS
+        ============================================================ */
+        .label-tag {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 10px; font-weight: 700;
+            letter-spacing: 0.35em; text-transform: uppercase;
+            color: var(--y);
+        }
+        .sec-title {
+            font-family: 'Anton', sans-serif;
+            text-transform: uppercase;
+            line-height: 0.93;
+            letter-spacing: -0.02em;
+        }
+
+        /* ============================================================
+           PILL BADGE
+        ============================================================ */
+        .pill {
+            display: inline-block;
+            background: var(--y); color: #000;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px; font-weight: 900;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            padding: 4px 12px; border-radius: 999px;
+        }
+
+        /* ============================================================
+           MARQUEE
+        ============================================================ */
+        .mq-wrap { overflow: hidden; }
+        .mq-track {
+            display: flex; white-space: nowrap;
+            animation: mq 22s linear infinite;
+        }
+        .mq-track-rev { animation: mqr 28s linear infinite; }
+        @keyframes mq  { from { transform: translateX(0);    } to { transform: translateX(-50%); } }
+        @keyframes mqr { from { transform: translateX(-50%); } to { transform: translateX(0);    } }
+
+        /* ============================================================
+           HERO
+        ============================================================ */
+        .hero {
+            position: relative; min-height: 100svh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .hero-grid {
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(255,184,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,184,0,0.03) 1px, transparent 1px);
+            background-size: 64px 64px;
+        }
+        .hero-radial {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 60% 50% at 15% 50%, rgba(255,184,0,0.09) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 85% 20%, rgba(255,184,0,0.06) 0%, transparent 60%),
+                linear-gradient(170deg, #050505 0%, #0a0a0a 60%, #050505 100%);
+        }
+        #hero-glow {
+            position: absolute; width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(255,184,0,0.11) 0%, transparent 65%);
+            border-radius: 50%; pointer-events: none;
+            transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+
+        /* ============================================================
+           LOGO
+        ============================================================ */
+        /* LOGO: substituir src da <img> para trocar a logo */
+        .logo-wrap {
+            position: relative; display: inline-block;
+        }
+        .logo-wrap img {
+            filter: drop-shadow(0 0 28px rgba(255,184,0,0.45))
+                    drop-shadow(0 0 70px rgba(255,184,0,0.2));
+        }
+        .logo-ring-1 {
+            position: absolute; inset: -14px;
+            border-radius: 50%; border: 1px solid rgba(255,184,0,0.2);
+            pointer-events: none;
+        }
+        .logo-ring-2 {
+            position: absolute; inset: -28px;
+            border-radius: 50%; border: 1px solid rgba(255,184,0,0.08);
+            pointer-events: none;
+            animation: orbit-pulse 3.5s ease-in-out infinite;
+        }
+        @keyframes orbit-pulse {
+            0%,100% { opacity: 0.4; transform: scale(1); }
+            50%      { opacity: 0.1; transform: scale(1.06); }
+        }
+
+        /* ============================================================
+           GLITCH TEXT
+        ============================================================ */
+        .glitch {
+            position: relative; display: inline-block;
+        }
+        .glitch::before, .glitch::after {
+            content: attr(data-g);
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+        .glitch::before {
+            color: var(--y); clip-path: polygon(0 0,100% 0,100% 42%,0 42%);
+            animation: g1 4s infinite;
+        }
+        .glitch::after {
+            color: rgba(255,255,255,0.85);
+            clip-path: polygon(0 58%,100% 58%,100% 100%,0 100%);
+            animation: g2 4s infinite;
+        }
+        @keyframes g1 {
+            0%,88%,100% { transform: translate(0); }
+            90% { transform: translate(-4px, 2px); }
+            93% { transform: translate(4px, -2px); }
+            96% { transform: translate(-3px, 1px); }
+        }
+        @keyframes g2 {
+            0%,88%,100% { transform: translate(0); }
+            90% { transform: translate(4px, -2px); }
+            93% { transform: translate(-4px, 2px); }
+            96% { transform: translate(3px, -1px); }
+        }
+
+        /* ============================================================
+           CTA BUTTON — HERO PRINCIPAL
+           Alterar texto/link na tag <a> correspondente
+        ============================================================ */
+        .cta-hero {
+            position: relative; display: inline-flex;
+            align-items: center; gap: 14px;
+            padding: 20px 40px;
+            background: var(--y); color: #000;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 900; font-size: 13px;
+            letter-spacing: 0.18em; text-transform: uppercase;
+            text-decoration: none; overflow: hidden;
+            clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+            transition: color 0.4s, box-shadow 0.4s;
+            animation: cta-pulse 2.4s cubic-bezier(0.215,0.61,0.355,1) infinite;
+        }
+        .cta-hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: #000;
+            transform: translateX(-101%);
+            transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        .cta-hero:hover::before { transform: translateX(0); }
+        .cta-hero:hover {
+            color: var(--y);
+            box-shadow: 0 0 50px rgba(255,184,0,0.35), 0 0 100px rgba(255,184,0,0.15);
+        }
+        .cta-hero > * { position: relative; z-index: 1; }
+        @keyframes cta-pulse {
+            0%   { box-shadow: 0 0 0 0 rgba(255,184,0,0.45); }
+            70%  { box-shadow: 0 0 0 22px rgba(255,184,0,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,184,0,0); }
+        }
+
+        /* ============================================================
+           VIDEO SECTION
+        ============================================================ */
+        /* VIDEO: substituir o ID do YouTube no iframe src */
+        .vid-wrap {
+            position: relative;
+            padding-bottom: 56.25%; height: 0; overflow: hidden;
+        }
+        .vid-wrap iframe {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        }
+        .vid-border {
+            position: relative;
+            border: 2px solid rgba(255,184,0,0.25);
+            box-shadow: 0 0 70px rgba(255,184,0,0.08), 0 0 140px rgba(255,184,0,0.04);
+        }
+        .vid-corner {
+            position: absolute; width: 28px; height: 28px;
+            border-color: var(--y); border-style: solid; z-index: 5;
+        }
+        .vc-tl { top: -5px; left: -5px; border-width: 2px 0 0 2px; }
+        .vc-tr { top: -5px; right: -5px; border-width: 2px 2px 0 0; }
+        .vc-bl { bottom: -5px; left: -5px; border-width: 0 0 2px 2px; }
+        .vc-br { bottom: -5px; right: -5px; border-width: 0 2px 2px 0; }
+
+        /* ============================================================
+           LINK CARDS — HUB DE LINKS
+           Alterar href, ícone e texto em cada .lk-card
+        ============================================================ */
+        .lk-card {
+            position: relative; display: flex; align-items: center; gap: 20px;
+            padding: 22px 28px; background: #0d0d0d;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-left: 3px solid var(--y);
+            text-decoration: none; color: #fff;
+            overflow: hidden;
+            transition: color 0.4s, border-color 0.3s;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+        }
+        .lk-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--y);
+            transform: translateX(-101%);
+            transition: transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        .lk-card:hover::before { transform: translateX(0); }
+        .lk-card:hover { color: #000; }
+        .lk-card > * { position: relative; z-index: 1; }
+        .lk-icon {
+            flex-shrink: 0; width: 50px; height: 50px;
+            border-radius: 50%;
+            background: rgba(255,184,0,0.07);
+            border: 1px solid rgba(255,184,0,0.15);
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.4s, border-color 0.4s;
+        }
+        .lk-card:hover .lk-icon { background: rgba(0,0,0,0.15); border-color: rgba(0,0,0,0.2); }
+        .lk-card:hover .lk-icon svg { fill: #000; stroke: #000; }
+        .lk-arrow { flex-shrink: 0; opacity: 0.3; transition: opacity 0.3s, transform 0.3s; }
+        .lk-card:hover .lk-arrow { opacity: 1; transform: translate(4px,-4px); }
+
+        /* ============================================================
+           INSTAGRAM GRID
+           Alterar href em cada .ig-card
+        ============================================================ */
+        .ig-card {
+            position: relative; overflow: hidden;
+            aspect-ratio: 1; background: #0e0e0e;
+            border: 1px solid rgba(255,255,255,0.04);
+            cursor: pointer; text-decoration: none;
+            display: block;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.4s;
+        }
+        .ig-card:hover {
+            border-color: rgba(255,184,0,0.3);
+            box-shadow: 0 0 30px rgba(255,184,0,0.08);
+            transform: scale(1.02);
+        }
+        .ig-card-inner {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 10px;
+        }
+        .ig-card-icon {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(255,184,0,0);
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.3s;
+        }
+        .ig-card:hover .ig-card-icon { background: rgba(255,184,0,0.15); }
+        .ig-card-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px; font-weight: 700;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            transition: color 0.3s;
+        }
+        .ig-card:hover .ig-card-label { color: var(--y); }
+        .ig-card-bar {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+            background: var(--y);
+            transform: scaleX(0); transform-origin: left;
+            transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+        }
+        .ig-card:hover .ig-card-bar { transform: scaleX(1); }
+        /* background patterns per card */
+        .ig-bg-1 { background: linear-gradient(135deg, #161616, #0a0a0a); }
+        .ig-bg-2 { background: linear-gradient(225deg, #141414, #090909); }
+        .ig-bg-3 { background: linear-gradient(315deg, #181818, #0b0b0b); }
+        .ig-bg-4 { background: linear-gradient(45deg,  #151515, #0a0a0a); }
+        .ig-bg-5 { background: linear-gradient(165deg, #171717, #0c0c0c); }
+        .ig-letter {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Anton', sans-serif; font-size: 7rem;
+            color: rgba(255,184,0,0.04); pointer-events: none; user-select: none;
+        }
+
+        /* ============================================================
+           STATS SECTION
+        ============================================================ */
+        .stat-num {
+            font-family: 'Anton', sans-serif;
+            font-size: clamp(3.5rem, 8vw, 6rem);
+            color: var(--y); line-height: 1;
+            letter-spacing: -0.03em;
+        }
+        .stat-label {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 0.25em; text-transform: uppercase;
+            color: rgba(255,255,255,0.4);
+            margin-top: 6px;
+        }
+
+        /* ============================================================
+           SOCIAL ICONS — FOOTER
+           Alterar href nos links abaixo
+        ============================================================ */
+        .soc-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 50px; height: 50px; border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.09);
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            transition: border-color 0.3s, color 0.3s, background 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .soc-btn:hover {
+            border-color: var(--y); color: var(--y);
+            background: rgba(255,184,0,0.07);
+            transform: translateY(-4px);
+            box-shadow: 0 0 22px rgba(255,184,0,0.18);
+        }
+
+        /* ============================================================
+           SCROLL REVEAL
+        ============================================================ */
+        .rv   { opacity: 0; transform: translateY(45px); }
+        .rv-l { opacity: 0; transform: translateX(-45px); }
+        .rv-r { opacity: 0; transform: translateX(45px);  }
+        .rv-s { opacity: 0; transform: scale(0.93); }
+
+        /* ============================================================
+           MISC AMBIENT LIGHT
+        ============================================================ */
+        .amb {
+            position: absolute; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,184,0,0.14) 0%, transparent 70%);
+            pointer-events: none; filter: blur(50px);
+        }
+
+        /* ============================================================
+           BACK TO TOP
+        ============================================================ */
+        #btt {
+            position: fixed; bottom: 24px; right: 24px;
+            width: 48px; height: 48px; background: var(--y); color: #000;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 500; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+            cursor: pointer;
+        }
+        #btt.vis { opacity: 1; pointer-events: auto; }
+        #btt:hover { transform: translateY(-4px); }
+
+        /* ============================================================
+           TORN EDGE SVG DIVIDERS
+        ============================================================ */
+        .torn { width: 100%; overflow: hidden; line-height: 0; display: block; }
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media (max-width: 640px) {
+            .cta-hero { padding: 17px 28px; font-size: 11px; }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ============================================================
+     FILM GRAIN CANVAS
+     Ajustar opacity: 0.035 em .grain no CSS para mais/menos granulação
+============================================================ -->
+<canvas class="grain" id="grain-canvas"></canvas>
+
+<!-- ============================================================
+     CUSTOM CURSOR
+============================================================ -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ============================================================
+     BACK TO TOP
+============================================================ -->
+<div id="btt" onclick="scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <path d="M18 15l-6-6-6 6"/>
+    </svg>
+</div>
+
+<!-- ============================================================
+     [1] HERO SECTION
+     LOGO: substituir URL no <img src> abaixo
+     SLOGAN: alterar texto no <h1>
+     CTA: alterar href no .cta-hero
+============================================================ -->
+<section class="hero" id="hero">
+
+    <!-- camadas de fundo -->
+    <div class="hero-radial"></div>
+    <div class="hero-grid"></div>
+
+    <!-- glow que segue o mouse -->
+    <div id="hero-glow"></div>
+
+    <!-- dot pattern cantos -->
+    <div class="dot-grid absolute inset-0 opacity-20 pointer-events-none"></div>
+
+    <!-- faixa de alerta topo -->
+    <div class="absolute top-0 left-0 right-0 h-1 stripes-y opacity-50 pointer-events-none"></div>
+
+    <!-- slashes laterais decorativos (desktop) -->
+    <div class="absolute left-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-1 pointer-events-none select-none opacity-[0.07]">
+        <span class="font-anton text-[9rem] leading-none text-[#FFB800]">/</span>
+        <span class="font-anton text-[9rem] leading-none text-[#FFB800]">/</span>
+        <span class="font-anton text-[9rem] leading-none text-[#FFB800]">/</span>
+    </div>
+    <div class="absolute right-6 top-1/2 -translate-y-1/2 hidden xl:flex flex-col gap-1 pointer-events-none select-none opacity-[0.07]">
+        <span class="font-anton text-[9rem] leading-none text-[#FFB800]">\</span>
+        <span class="font-anton text-[9rem] leading-none text-[#FFB800]">\</span>
+        <span class="font-anton text-[9rem] leading-none text-[#FFB800]">\</span>
+    </div>
+
+    <!-- halftone canto inferior direito -->
+    <div class="dot-grid-sm absolute bottom-0 right-0 w-72 h-72 opacity-30 pointer-events-none"></div>
+
+    <!-- conteúdo hero -->
+    <div class="relative z-10 flex flex-col items-center text-center px-5 py-28 w-full max-w-5xl mx-auto">
+
+        <!-- label tag topo -->
+        <div class="flex items-center gap-4 mb-10" id="h-label">
+            <span class="inline-block w-10 h-px bg-[#FFB800] opacity-60"></span>
+            <span class="label-tag">Crew de Corrida Urbana &nbsp;•&nbsp; Recife, PE</span>
+            <span class="inline-block w-10 h-px bg-[#FFB800] opacity-60"></span>
+        </div>
+
+        <!-- LOGO
+             Substituir src abaixo para trocar a imagem da logo
+             A URL do Instagram CDN pode expirar — salve a imagem localmente
+        -->
+        <div class="logo-wrap mb-10" id="h-logo">
+            <img
+                src="https://instagram.frec43-1.fna.fbcdn.net/v/t51.82787-19/573276745_17905821558267039_6447150322575747138_n.jpg?efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDAwLmMyIn0&_nc_ht=instagram.frec43-1.fna.fbcdn.net&_nc_cat=103&_nc_oc=Q6cZ2gGM_lx7d90oPBCkDwCJ3vXDqj6tamrvGeVt7r2aTZ2uzkAUJMujWeaKdU1X4d3s1mo&_nc_ohc=J5LWqfku4vgQ7kNvwERhCCN&_nc_gid=d3_tKMMASiEdNb5pvndGRw&edm=APoiHPcBAAAA&ccb=7-5&oh=00_Af5TPo-pIA8q7DqlrI07Km5PWqC-DGogd8_4KM1_F62sag&oe=6A0A861B&_nc_sid=22de04"
+                alt="Tropa dos Gorillas"
+                width="172" height="172"
+                class="rounded-full object-cover w-36 h-36 md:w-44 md:h-44"
+                loading="eager"
+            >
+            <div class="logo-ring-1"></div>
+            <div class="logo-ring-2"></div>
+        </div>
+
+        <!-- SLOGAN PRINCIPAL
+             Alterar texto aqui
+        -->
+        <h1 class="sec-title text-white mb-5 w-full" id="h-title"
+            style="font-size: clamp(3.6rem, 13vw, 9.5rem);">
+            NAS RUAS,<br>
+            <span class="glitch text-[#FFB800]" data-g="PORQUE SOMOS">PORQUE SOMOS</span><br>
+            DELA.
+        </h1>
+
+        <p class="text-gray-400 max-w-xs mb-12 text-[15px] leading-relaxed" id="h-sub">
+            Uma crew de corrida que nasceu no asfalto.<br>
+            <span class="text-[#FFB800] font-semibold">#TPDG</span>
+        </p>
+
+        <!-- CTA PRINCIPAL — WhatsApp
+             Alterar href abaixo para mudar o link do grupo
+        -->
+        <a
+            href="https://chat.whatsapp.com/E2CpcHkfN3F3XS4JSnttrX?mode=gi_t"
+            target="_blank" rel="noopener noreferrer"
+            class="cta-hero" id="h-cta"
+        >
+            <!-- ícone WhatsApp -->
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            <span>Entre no Grupo do WhatsApp</span>
+        </a>
+
+        <!-- scroll indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30 pointer-events-none" id="h-scroll">
+            <span class="label-tag" style="font-size:8px; color: rgba(255,255,255,0.4);">SCROLL</span>
+            <div class="w-px h-10 bg-gradient-to-b from-[#FFB800] to-transparent animate-pulse"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     [MARQUEE 1] — faixa amarela principal
+     Alterar texto nos spans abaixo
+============================================================ -->
+<div class="mq-wrap relative" style="background:#FFB800; padding: 14px 0;">
+    <!-- noise texture sobre o amarelo -->
+    <div class="absolute inset-0 pointer-events-none" style="background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E&quot;); opacity: 0.18; mix-blend-mode: multiply;"></div>
+    <div class="mq-track">
+        <span class="font-anton text-black uppercase pr-8" style="font-size:1.05rem; letter-spacing:0.1em; white-space:nowrap;">
+            NAS RUAS, PORQUE SOMOS DELA. &nbsp;/// TROPA DOS GORILLAS /// &nbsp;NAS RUAS, PORQUE SOMOS DELA. &nbsp;/// TROPA DOS GORILLAS /// &nbsp;NAS RUAS, PORQUE SOMOS DELA. &nbsp;/// TROPA DOS GORILLAS /// &nbsp;NAS RUAS, PORQUE SOMOS DELA. &nbsp;/// TROPA DOS GORILLAS ///&nbsp;
+        </span>
+        <span class="font-anton text-black uppercase pr-8" style="font-size:1.05rem; letter-spacing:0.1em; white-space:nowrap;" aria-hidden="true">
+            NAS RUAS, PORQUE SOMOS DELA. &nbsp;/// TROPA DOS GORILLAS /// &nbsp;NAS RUAS, PORQUE SOMOS DELA. &nbsp;/// TROPA DOS GORILLAS /// &nbsp;NAS RUAS, PORQUE SOMOS DELA. &nbsp;/// TROPA DOS GORILLAS /// &nbsp;NAS RUAS, PORQUE SOMOS DELA. &nbsp;/// TROPA DOS GORILLAS ///&nbsp;
+        </span>
+    </div>
+</div>
+
+<!-- ============================================================
+     [2] A TROPA EM AÇÃO — vídeo
+     VIDEO: alterar o ID do YouTube no iframe src (atual: DYYs96-O_dc)
+============================================================ -->
+<section class="relative py-24 px-5 overflow-hidden" id="em-acao" style="background:#0A0A0A;">
+
+    <!-- texturas de fundo -->
+    <div class="dot-grid-sm absolute inset-0 opacity-15 pointer-events-none"></div>
+    <div class="amb w-[500px] h-[500px] -top-20 -left-20 opacity-50"></div>
+
+    <div class="max-w-5xl mx-auto">
+
+        <!-- header da seção -->
+        <div class="mb-14 rv">
+            <p class="label-tag slash-deco mb-4">01 — Conteúdo</p>
+            <h2 class="sec-title text-white" style="font-size: clamp(2.8rem, 7vw, 5.5rem);">
+                A TROPA<br><span style="color:#FFB800;">EM AÇÃO</span>
+            </h2>
+            <div class="mt-5 w-20 h-2 stripes-y opacity-65"></div>
+        </div>
+
+        <!-- player de vídeo -->
+        <div class="rv" id="vid-block">
+            <div class="vid-border">
+                <div class="vid-corner vc-tl"></div>
+                <div class="vid-corner vc-tr"></div>
+                <div class="vid-corner vc-bl"></div>
+                <div class="vid-corner vc-br"></div>
+
+                <!-- badge WATCH NOW -->
+                <div class="absolute -top-4 left-8 z-10 pill">WATCH NOW</div>
+
+                <!-- IFRAME: substituir DYYs96-O_dc pelo ID do vídeo desejado -->
+                <div class="vid-wrap">
+                    <iframe
+                        src="https://www.youtube.com/embed/DYYs96-O_dc?rel=0&modestbranding=1&color=white"
+                        title="Tropa dos Gorillas — A Tropa em Ação"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                        loading="lazy"
+                    ></iframe>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- torn edge divider -->
+<div class="torn" style="background:#0A0A0A; margin-bottom:-2px;">
+    <svg viewBox="0 0 1440 48" preserveAspectRatio="none" style="width:100%;height:48px;display:block;">
+        <path d="M0,0 L0,34 Q80,48 160,28 Q240,10 320,36 Q400,48 480,24 Q560,6 640,32 Q720,48 800,26 Q880,8 960,34 Q1040,48 1120,24 Q1200,6 1280,30 Q1360,48 1440,28 L1440,0 Z" fill="#111111"/>
+    </svg>
+</div>
+
+<!-- ============================================================
+     [3] HUB DE LINKS
+     Alterar href, título e subtítulo em cada .lk-card
+============================================================ -->
+<section class="relative py-24 px-5" id="links" style="background:#111111;">
+
+    <div class="dot-grid absolute top-0 right-0 w-80 h-80 opacity-20 pointer-events-none"></div>
+
+    <div class="max-w-3xl mx-auto">
+
+        <div class="mb-14 rv">
+            <p class="label-tag slash-deco mb-4">02 — Conexões</p>
+            <h2 class="sec-title text-white" style="font-size: clamp(2.8rem, 7vw, 5.5rem);">
+                FAÇA<br><span style="color:#FFB800;">PARTE</span>
+            </h2>
+            <div class="mt-5 w-20 h-2 stripes-y opacity-65"></div>
+        </div>
+
+        <!-- stack de links -->
+        <div class="flex flex-col gap-4">
+
+            <!-- LINK 1: Negócios & Parcerias
+                 Alterar href e texto abaixo
+            -->
+            <a href="https://wa.me/5581993104540" target="_blank" rel="noopener noreferrer" class="lk-card rv" id="lk1">
+                <div class="lk-icon">
+                    <!-- ícone WhatsApp -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFB800">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="label-tag mb-1" style="color: rgba(255,255,255,0.3); font-size:9px;">Contato Direto</div>
+                    <div class="font-montserrat font-bold text-[17px]" style="letter-spacing:-0.01em;">Negócios &amp; Parcerias</div>
+                </div>
+                <div class="lk-arrow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 17L17 7M17 7H7M17 7v10"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- LINK 2: Strava
+                 Alterar href abaixo
+            -->
+            <a href="https://www.strava.com/clubs/1718632" target="_blank" rel="noopener noreferrer" class="lk-card rv" id="lk2">
+                <div class="lk-icon">
+                    <!-- ícone Strava -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="#FFB800">
+                        <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.169"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="label-tag mb-1" style="color: rgba(255,255,255,0.3); font-size:9px;">Comunidade</div>
+                    <div class="font-montserrat font-bold text-[17px]" style="letter-spacing:-0.01em;">Entre no nosso Clube no Strava</div>
+                </div>
+                <div class="lk-arrow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 17L17 7M17 7H7M17 7v10"/>
+                    </svg>
+                </div>
+            </a>
+
+            <!-- LINK 3: Foco Radical
+                 CUPOM: TROPA10 — alterar badge e link abaixo se necessário
+            -->
+            <a href="https://www.focoradical.com.br/site/index?filters_override=0&CompetitionSearch%5Bstate%5D=17&CompetitionSearch%5Bsearch_events%5D=tropa+dos+gorillas"
+               target="_blank" rel="noopener noreferrer" class="lk-card rv" id="lk3">
+                <div class="lk-icon">
+                    <!-- ícone troféu -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFB800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                        <path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="label-tag" style="color: rgba(255,255,255,0.3); font-size:9px;">Corridas</span>
+                        <!-- badge cupom — alterar código do cupom aqui -->
+                        <span class="pill" style="font-size:8px;">CUPOM: TROPA10</span>
+                    </div>
+                    <div class="font-montserrat font-bold text-[17px]" style="letter-spacing:-0.01em;">Foco Radical</div>
+                </div>
+                <div class="lk-arrow">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M7 17L17 7M17 7H7M17 7v10"/>
+                    </svg>
+                </div>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+<!-- ============================================================
+     [MARQUEE 2] — faixa de hashtags (reversa)
+============================================================ -->
+<div class="mq-wrap relative" style="background:#050505; padding:12px 0; border-top:1px solid rgba(255,184,0,0.08); border-bottom:1px solid rgba(255,184,0,0.08);">
+    <div class="mq-track mq-track-rev">
+        <span class="font-anton uppercase pr-8" style="font-size:0.85rem; letter-spacing:0.18em; color:rgba(255,184,0,0.2); white-space:nowrap;">
+            #TPDG &nbsp;•&nbsp; #TROPADOSGORILLAS &nbsp;•&nbsp; #CORRIDA &nbsp;•&nbsp; #STREET &nbsp;•&nbsp; #RUN &nbsp;•&nbsp; #URBANO &nbsp;•&nbsp; #COMUNIDADE &nbsp;•&nbsp; #ASFALTO &nbsp;•&nbsp; #NOITE &nbsp;•&nbsp; #RECIFE &nbsp;•&nbsp;
+            #TPDG &nbsp;•&nbsp; #TROPADOSGORILLAS &nbsp;•&nbsp; #CORRIDA &nbsp;•&nbsp; #STREET &nbsp;•&nbsp; #RUN &nbsp;•&nbsp; #URBANO &nbsp;•&nbsp; #COMUNIDADE &nbsp;•&nbsp; #ASFALTO &nbsp;•&nbsp; #NOITE &nbsp;•&nbsp; #RECIFE &nbsp;•&nbsp;
+        </span>
+        <span class="font-anton uppercase pr-8" style="font-size:0.85rem; letter-spacing:0.18em; color:rgba(255,184,0,0.2); white-space:nowrap;" aria-hidden="true">
+            #TPDG &nbsp;•&nbsp; #TROPADOSGORILLAS &nbsp;•&nbsp; #CORRIDA &nbsp;•&nbsp; #STREET &nbsp;•&nbsp; #RUN &nbsp;•&nbsp; #URBANO &nbsp;•&nbsp; #COMUNIDADE &nbsp;•&nbsp; #ASFALTO &nbsp;•&nbsp; #NOITE &nbsp;•&nbsp; #RECIFE &nbsp;•&nbsp;
+            #TPDG &nbsp;•&nbsp; #TROPADOSGORILLAS &nbsp;•&nbsp; #CORRIDA &nbsp;•&nbsp; #STREET &nbsp;•&nbsp; #RUN &nbsp;•&nbsp; #URBANO &nbsp;•&nbsp; #COMUNIDADE &nbsp;•&nbsp; #ASFALTO &nbsp;•&nbsp; #NOITE &nbsp;•&nbsp; #RECIFE &nbsp;•&nbsp;
+        </span>
+    </div>
+</div>
+
+<!-- ============================================================
+     [4] STATS — números da tropa
+     Alterar números e labels abaixo
+============================================================ -->
+<section class="relative py-24 px-5 overflow-hidden" style="background:#0A0A0A;">
+
+    <div class="amb w-[400px] h-[400px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-40"></div>
+
+    <div class="max-w-5xl mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
+
+            <!-- stat 1 — alterar número e label -->
+            <div class="text-center rv">
+                <div class="stat-num">500<span style="color:#FFB800;">+</span></div>
+                <div class="stat-label">Membros Ativos</div>
+            </div>
+
+            <!-- stat 2 -->
+            <div class="text-center rv">
+                <div class="stat-num">3<span style="color:#FFB800;">K</span></div>
+                <div class="stat-label">Km Rodados</div>
+            </div>
+
+            <!-- stat 3 -->
+            <div class="text-center rv">
+                <div class="stat-num">48<span style="color:#FFB800;">+</span></div>
+                <div class="stat-label">Corridas Feitas</div>
+            </div>
+
+            <!-- stat 4 -->
+            <div class="text-center rv">
+                <div class="stat-num">1<span style="color:#FFB800;"> Crew</span></div>
+                <div class="stat-label">Das Ruas de Recife</div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- torn edge divider -->
+<div class="torn" style="background:#0A0A0A;">
+    <svg viewBox="0 0 1440 48" preserveAspectRatio="none" style="width:100%;height:48px;display:block;">
+        <path d="M0,0 L0,20 Q100,48 200,30 Q300,12 400,42 Q500,48 600,22 Q700,4 800,38 Q900,48 1000,18 Q1100,4 1200,36 Q1320,48 1440,20 L1440,0 Z" fill="#050505"/>
+    </svg>
+</div>
+
+<!-- ============================================================
+     [5] INSTAGRAM — SOCIAL GRID
+     Alterar href em cada .ig-card
+     As imagens de fundo são placeholders — você pode adicionar
+     background-image inline com suas fotos reais do feed
+============================================================ -->
+<section class="relative py-24 px-5 overflow-hidden" id="social" style="background:#050505;">
+
+    <div class="dot-grid absolute inset-0 opacity-10 pointer-events-none"></div>
+    <div class="amb w-[500px] h-[500px] top-0 right-0 opacity-35"></div>
+
+    <div class="max-w-5xl mx-auto">
+
+        <div class="mb-14 rv">
+            <p class="label-tag slash-deco mb-4">03 — Comunidade</p>
+            <h2 class="sec-title text-white" style="font-size: clamp(2.8rem, 7vw, 5.5rem);">
+                NAS<br><span style="color:#FFB800;">REDES</span>
+            </h2>
+            <div class="mt-5 w-20 h-2 stripes-y opacity-65"></div>
+            <p class="mt-6 text-gray-500 max-w-xs text-[14px] leading-relaxed" style="font-family:'Inter',sans-serif;">
+                Segue a tropa no Instagram e vê o que rola nas ruas.
+            </p>
+        </div>
+
+        <!-- grid de posts
+             Layout: 3 colunas desktop, 2 colunas mobile
+             Post 3 e 5 ocupam 2 colunas para criar ritmo visual assimétrico
+        -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+
+            <!-- POST 1 — alterar href -->
+            <a href="https://www.instagram.com/p/DW5AxxhNNJV/" target="_blank" rel="noopener noreferrer"
+               class="ig-card ig-bg-1 rv" id="ig1">
+                <div class="ig-letter">G</div>
+                <div class="ig-card-inner">
+                    <div class="ig-card-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,184,0,0.55)" aria-hidden="true">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                        </svg>
+                    </div>
+                    <span class="ig-card-label">Ver Post</span>
+                </div>
+                <div class="ig-card-bar"></div>
+            </a>
+
+            <!-- POST 2 — alterar href -->
+            <a href="https://www.instagram.com/p/DWjx9JZFTdW/?img_index=1" target="_blank" rel="noopener noreferrer"
+               class="ig-card ig-bg-2 rv" id="ig2">
+                <div class="ig-letter">T</div>
+                <div class="ig-card-inner">
+                    <div class="ig-card-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,184,0,0.55)" aria-hidden="true">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                        </svg>
+                    </div>
+                    <span class="ig-card-label">Ver Post</span>
+                </div>
+                <div class="ig-card-bar"></div>
+            </a>
+
+            <!-- POST 3 — largo no mobile (col-span-2), normal no desktop
+                 alterar href -->
+            <a href="https://www.instagram.com/p/DVn1EGpjREN/" target="_blank" rel="noopener noreferrer"
+               class="ig-card ig-bg-3 rv col-span-2 md:col-span-1" id="ig3">
+                <div class="ig-letter">P</div>
+                <div class="ig-card-inner">
+                    <div class="ig-card-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,184,0,0.55)" aria-hidden="true">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                        </svg>
+                    </div>
+                    <span class="ig-card-label">Ver Post</span>
+                </div>
+                <div class="ig-card-bar"></div>
+            </a>
+
+            <!-- POST 4 — alterar href -->
+            <a href="https://www.instagram.com/p/DVPF-dhjxtq/" target="_blank" rel="noopener noreferrer"
+               class="ig-card ig-bg-4 rv" id="ig4">
+                <div class="ig-letter">D</div>
+                <div class="ig-card-inner">
+                    <div class="ig-card-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,184,0,0.55)" aria-hidden="true">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                        </svg>
+                    </div>
+                    <span class="ig-card-label">Ver Post</span>
+                </div>
+                <div class="ig-card-bar"></div>
+            </a>
+
+            <!-- POST 5 — largo no desktop (col-span-2)
+                 alterar href -->
+            <a href="https://www.instagram.com/p/DVRwbu9jzaI/?img_index=1" target="_blank" rel="noopener noreferrer"
+               class="ig-card ig-bg-5 rv col-span-1 md:col-span-2" style="aspect-ratio: auto; min-height: 200px;" id="ig5">
+                <div class="ig-letter">G</div>
+                <div class="ig-card-inner">
+                    <div class="ig-card-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,184,0,0.55)" aria-hidden="true">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                        </svg>
+                    </div>
+                    <span class="ig-card-label">Ver Post</span>
+                </div>
+                <div class="ig-card-bar"></div>
+            </a>
+
+        </div>
+
+        <!-- CTA seguir -->
+        <div class="mt-12 text-center rv">
+            <!-- LINK: alterar href abaixo para mudar perfil do Instagram -->
+            <a href="https://www.instagram.com/tropadosgorillasrun/" target="_blank" rel="noopener noreferrer"
+               class="inline-flex items-center gap-3 px-8 py-4 border border-[#FFB800] text-[#FFB800] font-montserrat font-bold text-[12px] uppercase tracking-[0.18em]"
+               style="clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px)); transition: background 0.35s, color 0.35s;"
+               onmouseenter="this.style.background='#FFB800';this.style.color='#000';"
+               onmouseleave="this.style.background='transparent';this.style.color='#FFB800';"
+            >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                </svg>
+                Seguir no Instagram
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- ============================================================
+     [6] FOOTER
+     Alterar links sociais, copyright e links rápidos abaixo
+============================================================ -->
+<footer class="relative pt-20 pb-10 px-5" style="background:#050505; border-top:1px solid rgba(255,184,0,0.08);">
+
+    <div class="max-w-5xl mx-auto">
+
+        <!-- top do footer -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+
+            <!-- brand -->
+            <div>
+                <!-- LOGO footer: substituir src se necessário -->
+                <img
+                    src="https://instagram.frec43-1.fna.fbcdn.net/v/t51.82787-19/573276745_17905821558267039_6447150322575747138_n.jpg?efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLmRqYW5nby4xMDAwLmMyIn0&_nc_ht=instagram.frec43-1.fna.fbcdn.net&_nc_cat=103&_nc_oc=Q6cZ2gGM_lx7d90oPBCkDwCJ3vXDqj6tamrvGeVt7r2aTZ2uzkAUJMujWeaKdU1X4d3s1mo&_nc_ohc=J5LWqfku4vgQ7kNvwERhCCN&_nc_gid=d3_tKMMASiEdNb5pvndGRw&edm=APoiHPcBAAAA&ccb=7-5&oh=00_Af5TPo-pIA8q7DqlrI07Km5PWqC-DGogd8_4KM1_F62sag&oe=6A0A861B&_nc_sid=22de04"
+                    alt="TPDG" width="56" height="56"
+                    class="rounded-full object-cover mb-5 w-14 h-14"
+                    style="filter: grayscale(100%) contrast(1.1); opacity: 0.65;"
+                    loading="lazy"
+                >
+                <!-- BRAND NAME: alterar se necessário -->
+                <h3 class="font-anton text-2xl text-white leading-none mb-2" style="letter-spacing:-0.01em;">TROPA DOS<br>GORILLAS</h3>
+                <p class="text-gray-600 text-[13px]" style="font-family:'Inter',sans-serif;">Nas ruas, porque somos dela.</p>
+            </div>
+
+            <!-- links rápidos — alterar href e texto -->
+            <div>
+                <h4 class="label-tag mb-6">Links Rápidos</h4>
+                <ul class="space-y-3">
+                    <li><a href="https://chat.whatsapp.com/E2CpcHkfN3F3XS4JSnttrX?mode=gi_t" class="text-gray-500 hover:text-[#FFB800] text-[13px] transition-colors" style="font-family:'Inter',sans-serif;">Grupo WhatsApp</a></li>
+                    <li><a href="https://wa.me/5581993104540" class="text-gray-500 hover:text-[#FFB800] text-[13px] transition-colors" style="font-family:'Inter',sans-serif;">Negócios &amp; Parcerias</a></li>
+                    <li><a href="https://www.strava.com/clubs/1718632" class="text-gray-500 hover:text-[#FFB800] text-[13px] transition-colors" style="font-family:'Inter',sans-serif;">Clube Strava</a></li>
+                    <li><a href="https://www.focoradical.com.br/site/index?filters_override=0&CompetitionSearch%5Bstate%5D=17&CompetitionSearch%5Bsearch_events%5D=tropa+dos+gorillas" class="text-gray-500 hover:text-[#FFB800] text-[13px] transition-colors" style="font-family:'Inter',sans-serif;">Foco Radical • TROPA10</a></li>
+                </ul>
+            </div>
+
+            <!-- redes sociais
+                 Alterar href abaixo para cada rede
+            -->
+            <div>
+                <h4 class="label-tag mb-6">Redes Sociais</h4>
+                <div class="flex flex-wrap gap-3">
+
+                    <!-- Instagram — alterar href -->
+                    <a href="https://www.instagram.com/tropadosgorillasrun/" target="_blank" rel="noopener noreferrer" class="soc-btn" title="Instagram">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+                        </svg>
+                    </a>
+
+                    <!-- TikTok — alterar href -->
+                    <a href="https://www.tiktok.com/@tropadosgorillas" target="_blank" rel="noopener noreferrer" class="soc-btn" title="TikTok">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.31 6.31 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.13 8.13 0 0 0 4.77 1.52V6.76a4.84 4.84 0 0 1-1-.07z"/>
+                        </svg>
+                    </a>
+
+                    <!-- YouTube — alterar href -->
+                    <a href="https://www.youtube.com/@TROPADOSGORILLASRUN" target="_blank" rel="noopener noreferrer" class="soc-btn" title="YouTube">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                    </a>
+
+                    <!-- Spotify — alterar href -->
+                    <a href="https://open.spotify.com/user/31iqjclwxocatdcvyhpuxqvml4em?si=o7ddQpYCR6CY16h7L6LdRA" target="_blank" rel="noopener noreferrer" class="soc-btn" title="Spotify">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                        </svg>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- rodapé fundo -->
+        <div class="pt-8 border-t border-gray-900 flex flex-col md:flex-row items-center justify-between gap-4">
+
+            <!-- COPYRIGHT: alterar texto abaixo -->
+            <p class="text-gray-700 text-[11px] text-center md:text-left" style="font-family:'Inter',sans-serif;">
+                Tropa dos Gorillas © Todos os direitos reservados.
+            </p>
+
+            <!-- tagline rodapé -->
+            <p class="font-anton text-[11px] tracking-[0.2em] uppercase" style="color: rgba(255,184,0,0.3);">
+                NAS RUAS, PORQUE SOMOS DELA.
+            </p>
+
+        </div>
+
+    </div>
+</footer>
+
+<!-- ============================================================
+     SCRIPTS — lógica de animação e interatividade
+============================================================ -->
+<script>
+// ============================================================
+// FILM GRAIN — canvas procedural
+// Ajustar opacidade em .grain no CSS (opacity: 0.035)
+// ============================================================
+(function () {
+    const c = document.getElementById('grain-canvas');
+    const ctx = c.getContext('2d');
+
+    function resize() {
+        c.width  = window.innerWidth;
+        c.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+
+    let raf;
+    function tick() {
+        const w = c.width, h = c.height;
+        const img = ctx.createImageData(w, h);
+        const d   = img.data;
+        for (let i = 0; i < d.length; i += 4) {
+            const v = (Math.random() * 255) | 0;
+            d[i] = d[i+1] = d[i+2] = v;
+            d[i+3] = 255;
+        }
+        ctx.putImageData(img, 0, 0);
+        raf = requestAnimationFrame(tick);
+    }
+    tick();
+
+    // pausar quando aba não visível para economizar CPU
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) cancelAnimationFrame(raf);
+        else tick();
+    });
+})();
+
+// ============================================================
+// CURSOR CUSTOM
+// ============================================================
+(function () {
+    const dot  = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    if (!dot || !ring) return;
+
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        dot.style.transform = `translate(${mx}px, ${my}px) translate(-50%,-50%)`;
+    }, { passive: true });
+
+    (function lerp() {
+        rx += (mx - rx) * 0.11;
+        ry += (my - ry) * 0.11;
+        ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%,-50%)`;
+        requestAnimationFrame(lerp);
+    })();
+
+    document.querySelectorAll('a, button, .lk-card, .ig-card, #btt').forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+    });
+})();
+
+// ============================================================
+// HERO GLOW SEGUE MOUSE
+// ============================================================
+(function () {
+    const glow = document.getElementById('hero-glow');
+    const hero = document.getElementById('hero');
+    if (!glow || !hero) return;
+
+    hero.addEventListener('mousemove', e => {
+        const r = hero.getBoundingClientRect();
+        glow.style.transform = `translate(${e.clientX - r.left - 350}px, ${e.clientY - r.top - 350}px)`;
+    }, { passive: true });
+})();
+
+// ============================================================
+// BOTÃO MAGNÉTICO — CTA hero
+// ============================================================
+(function () {
+    const btn = document.getElementById('h-cta');
+    if (!btn) return;
+
+    btn.addEventListener('mousemove', e => {
+        const r = btn.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width  / 2) * 0.28;
+        const y = (e.clientY - r.top  - r.height / 2) * 0.28;
+        btn.style.transform = `translate(${x}px, ${y}px)`;
+        btn.style.transition = 'transform 0.1s linear';
+    });
+    btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translate(0,0)';
+        btn.style.transition = 'transform 0.55s cubic-bezier(0.25,0.46,0.45,0.94)';
+    });
+})();
+
+// ============================================================
+// BACK TO TOP
+// ============================================================
+(function () {
+    const btt = document.getElementById('btt');
+    window.addEventListener('scroll', () => {
+        btt.classList.toggle('vis', window.scrollY > 500);
+    }, { passive: true });
+})();
+
+// ============================================================
+// GSAP SCROLL ANIMATIONS
+// ============================================================
+gsap.registerPlugin(ScrollTrigger);
+
+// Reveal genérico — todas as classes .rv, .rv-l, .rv-r, .rv-s
+gsap.utils.toArray('.rv').forEach(el => {
+    gsap.fromTo(el,
+        { opacity: 0, y: 48, filter: 'blur(6px)' },
+        {
+            opacity: 1, y: 0, filter: 'blur(0px)',
+            duration: 0.85, ease: 'power3.out',
+            scrollTrigger: { trigger: el, start: 'top 86%', toggleActions: 'play none none none' }
+        }
+    );
+});
+
+gsap.utils.toArray('.rv-l').forEach(el => {
+    gsap.fromTo(el,
+        { opacity: 0, x: -48 },
+        { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 86%', toggleActions: 'play none none none' } }
+    );
+});
+
+gsap.utils.toArray('.rv-s').forEach(el => {
+    gsap.fromTo(el,
+        { opacity: 0, scale: 0.9 },
+        { opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 86%', toggleActions: 'play none none none' } }
+    );
+});
+
+// ─── Hero timeline ───
+const htl = gsap.timeline({ delay: 0.2 });
+htl
+    .from('#h-label', { opacity: 0, y: 20, duration: 0.7, ease: 'power3.out' })
+    .from('#h-logo',  { opacity: 0, scale: 0.78, duration: 1,   ease: 'back.out(2)' }, '-=0.3')
+    .from('#h-title', { opacity: 0, y: 65, duration: 1.05, ease: 'power4.out' }, '-=0.55')
+    .from('#h-sub',   { opacity: 0, y: 30, duration: 0.75, ease: 'power3.out' }, '-=0.65')
+    .from('#h-cta',   { opacity: 0, y: 28, duration: 0.7,  ease: 'power3.out' }, '-=0.55')
+    .from('#h-scroll',{ opacity: 0, duration: 0.5 }, '-=0.3');
+
+// ─── Parallax suave no título hero ───
+gsap.to('#h-title', {
+    y: -90,
+    ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.2 }
+});
+
+// ─── Links hub: entrada em stagger da esquerda ───
+gsap.fromTo(['#lk1','#lk2','#lk3'],
+    { opacity: 0, x: -44 },
+    {
+        opacity: 1, x: 0, duration: 0.7, stagger: 0.14, ease: 'power3.out',
+        scrollTrigger: { trigger: '#links', start: 'top 72%' }
+    }
+);
+
+// ─── Instagram cards: scale in stagger ───
+gsap.fromTo(['#ig1','#ig2','#ig3','#ig4','#ig5'],
+    { opacity: 0, scale: 0.93 },
+    {
+        opacity: 1, scale: 1, duration: 0.6, stagger: 0.09, ease: 'power2.out',
+        scrollTrigger: { trigger: '#social', start: 'top 72%' }
+    }
+);
+
+// ─── Stats: slide up stagger ───
+gsap.utils.toArray('.stat-num').forEach((el, i) => {
+    gsap.from(el, {
+        opacity: 0, y: 35, duration: 0.7, delay: i * 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    });
+});
+</script>
+
+</body>
+</html>
